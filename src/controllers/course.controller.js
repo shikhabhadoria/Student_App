@@ -13,11 +13,11 @@ export const addCourse = async(req, res) => {
         return res.status(400).json({message: "Requirements are not fullfilled!"})
     }
 
-    if (Number.isNaN(Number(durationWeeks))) {
-    return res.status(400).json({
-        message: "durationWeeks should be a number"
-    });
- }
+    if(Number.isNaN(Number(durationWeeks))) {
+        return res.status(400).json({
+            message: "durationWeeks should be a number"
+        });
+    }
 
     const existingCourseByTitle = await Course.findOne({title});
 

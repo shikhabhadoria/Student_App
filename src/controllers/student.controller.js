@@ -6,14 +6,27 @@
 
 import Student from "../model/student.model.js"
 import Enrollment from "../model/enrollement.model.js"
+import multer from "multer";
+import cloudinary from "../../middlewares/cloudinary.js";
+export const upload = multer({
+    storage: multer.memoryStorage(),   //RAM 
+});
 
 export const createStudent = async(req, res) => {
    try{
         const {firstName, lastName, email, age} = req.body;
 
+         if (!req.file) {       // req.file is for media file request
+                return res.status(400).json({
+                    message: "Image required",
+                });
+            }
+
     if(!firstName || !email || !age){
         return res.status(400).json({message: "complete details are required"})
     }
+
+
 
     const existingStudent = await Student.findOne({email});
     if(existingStudent){
@@ -24,13 +37,27 @@ export const createStudent = async(req, res) => {
         return res.status(400).json({
             message: "age should be in numbers"
         });
-    }       
+    }   
+    
+    const fileString =
+                `data:${req.file.mimetype};base64,` +
+                req.file.buffer.toString("base64");
+
+            const uploadResult =
+                await cloudinary.uploader.upload(
+                    fileString,
+                    {
+                        folder: "clothes",
+                    }
+                );
+
 
     const student = await Student.create({
         firstName,
         lastName: lastName || null,
         email,
-        age
+        age,
+        imageUrl: uploadResult.secure_url,
     })
 
     res.status(200).json(

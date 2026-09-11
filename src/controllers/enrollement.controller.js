@@ -112,17 +112,15 @@ export const getAllCourseWithStudentId = async(req, res) => {
                 return res.status(404).json({message: "student not found"})
             }
 
-            console.log("1")
-
             const courseEnrollments = await Enrollment.find({
                 studentid: studentId
             }).populate("courseid")
 
-            console.log("2")
+           
             const courses = courseEnrollments.map(
                 (courseEnrollments) => courseEnrollments.courseid
             )
-            console.log("3")
+
             res.status(200).json({
                 existingStudent,
                 counts: courses.length,
@@ -134,6 +132,41 @@ export const getAllCourseWithStudentId = async(req, res) => {
     }
 }
 
+
+
+export const removeAssignmentByEnrollments = async(req, res) => {
+    try{
+    const { enrollmentId } = req.params;
+
+    const removeAssignment = await Enrollment.deleteOne({enrollmentId});
+    if(!removeAssignment){
+        return res.status(400).json({message: "enrollmentId is wrong"})
+    }
+
+    return res.status(200).json({message: "enrollment is removed successfully!"});
+    }catch(error){
+        res.status(500).json({message: error.message});
+    }
+}
+
+export const getassignmentByEnrollmentId = async(req, res) => {
+    try{
+    const { enrollmentId } = req.params;
+
+    const assignment = await Enrollment.findOne({enrollmentId});
+    if(!assignment){
+        return res.status(400).json({message:"enrollmentId is misleading"})
+    }
+
+    return res.status(200).json({
+        message: "your enrollment for the given enrollmentId",
+        studentid: assignment.studentid,
+        courseid: assignment.courseid
+    })
+    }catch(error){
+        return res.status(500).json({message:error.message});
+    }
+}
 
 
 

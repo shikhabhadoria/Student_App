@@ -21,7 +21,11 @@ const studentSchema = new mongoose.Schema({
         type: Number,
         required: true,
         min:1
-    }
+    },
+    imageUrl: {
+            type: String,
+            required: true,
+    },
     
 }, {timestamps:true}
 );

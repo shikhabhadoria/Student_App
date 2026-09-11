@@ -11,5 +11,4 @@ router.get("/", getAllCourses);
 router.put("/:id", updateCourse);
 router.delete("/:id", deleteCourse);
 
-
 export default router;
